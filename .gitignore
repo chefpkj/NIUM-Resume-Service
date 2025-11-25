@@ -2,9 +2,10 @@ node_modules
 dist
 logs
 *.log
-env/.dev.env
-env/.prod.env
-.env
+# TODO: dont push env files to git
+# env/.dev.env
+# env/.prod.env
+# .env
 .DS_Store
 .DS_Store?
 ._*
