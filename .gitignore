@@ -6,3 +6,5 @@ env/.dev.env
 env/.prod.env
 .env
 .DS_Store
+.DS_Store?
+._*
