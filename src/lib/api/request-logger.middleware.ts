@@ -1,4 +1,3 @@
-import "../../types/express";
 import { Request, Response, NextFunction } from "express";
 import { randomUUID } from "crypto";
 import createLogger from "../util/logger";

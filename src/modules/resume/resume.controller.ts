@@ -1,4 +1,3 @@
-import "../../types/express";
 import { Request, Response } from "express";
 import { ResumeService } from "./resume.service";
 import createLogger from "../../lib/util/logger";

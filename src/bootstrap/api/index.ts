@@ -1,5 +1,4 @@
 import "../../conf/env";
-import "../../types/express";
 import express from "express";
 import cors from "cors";
 import config from "../../conf/app.conf";
