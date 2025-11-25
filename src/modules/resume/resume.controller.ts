@@ -1,3 +1,4 @@
+import "../../types/express";
 import { Request, Response } from "express";
 import { ResumeService } from "./resume.service";
 import createLogger from "../../lib/util/logger";
@@ -15,7 +16,7 @@ export function createResumeController(
 ): ResumeController {
   return {
     uploadResumeDetails: async (req: Request, res: Response) => {
-      const requestId = (req as any).requestId;
+      const requestId = req.requestId;
       logger.info("POST /uploadResumeDetails", { requestId });
 
       const resumeId = await service.uploadResumeDetails(req.body, requestId);
@@ -23,7 +24,7 @@ export function createResumeController(
     },
 
     getResumeById: async (req: Request, res: Response) => {
-      const requestId = (req as any).requestId;
+      const requestId = req.requestId;
       logger.info("GET /getResumeById", { requestId, id: req.params.id });
 
       const data = await service.getResumeDetailsById(req.params.id, requestId);
@@ -31,7 +32,7 @@ export function createResumeController(
     },
 
     getResumeByName: async (req: Request, res: Response) => {
-      const requestId = (req as any).requestId;
+      const requestId = req.requestId;
       logger.info("GET /getResumeByName", { requestId, name: req.params.name });
 
       const resumes = await service.searchResumesByName(

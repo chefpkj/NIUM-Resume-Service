@@ -3,14 +3,13 @@ import {
   validateUploadPayload,
   decodeSearchName,
 } from "./helpers/resume.helpers";
-import { ResumeDto } from "./dtos/resume.dto";
 import { ResumeEntity } from "./domain/resume.types";
 import createLogger from "../../lib/util/logger";
 
 const logger = createLogger("resume.service");
 
 export interface ResumeService {
-  uploadResumeDetails(payload: any, requestId?: string): Promise<string>;
+  uploadResumeDetails(payload: unknown, requestId?: string): Promise<string>;
   getResumeDetailsById(
     id: string,
     requestId?: string
@@ -37,7 +36,7 @@ export function createResumeService(
   repository: ResumeRepositoryPort
 ): ResumeService {
   return {
-    uploadResumeDetails: async (payload: any, requestId?: string) => {
+    uploadResumeDetails: async (payload: unknown, requestId?: string) => {
       logger.info("Uploading resume details", { requestId });
 
       const {

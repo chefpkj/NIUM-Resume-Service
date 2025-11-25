@@ -11,22 +11,19 @@ const isDev = config.env === "development";
 
 const winstonLogger = createWinstonLogger({
   level: "info",
-  format: format.combine(
-    format.timestamp(),
-    format.errors({ stack: true }),
-    format.json()
-  ),
+  format: format.combine(format.errors({ stack: true }), format.json()),
   transports: [
     new transports.Console({
       format: isDev
         ? format.combine(
             format.colorize(),
-            format.printf(({ level, message, service, ...meta }) => {
-              const serviceTag = service ? `[${service}]` : "";
-              const metaStr = Object.keys(meta).length
-                ? JSON.stringify(meta)
+            format.printf(({ level, message, name, requestId, metadata }) => {
+              const nameTag = name ? `[${name}]` : "";
+              const reqId = requestId ? `requestId=${requestId}` : "";
+              const metaStr = metadata
+                ? `metadata=${JSON.stringify(metadata)}`
                 : "";
-              return `${level} ${serviceTag} ${message} ${metaStr}`;
+              return `${level} ${nameTag} ${message} ${reqId} ${metaStr}`.trim();
             })
           )
         : format.json(),
@@ -35,6 +32,7 @@ const winstonLogger = createWinstonLogger({
       filename: path.resolve(logDir, "app.log"),
       maxsize: 5242880,
       maxFiles: 5,
+      format: format.combine(format.timestamp(), format.json()),
     }),
   ],
 });
@@ -44,20 +42,29 @@ interface Logger {
   error(message: string, meta?: Record<string, any> | Error): void;
 }
 
-export default function createLogger(serviceName: string): Logger {
+export default function createLogger(name: string): Logger {
   return {
-    info: (message, meta = {}) => {
-      winstonLogger.info(message, { service: serviceName, ...meta });
+    info: (message, data = {}) => {
+      const { requestId, ...metadata } = data;
+      winstonLogger.info(message, {
+        name,
+        ...(requestId && { requestId }),
+        ...(Object.keys(metadata).length > 0 && { metadata }),
+      });
     },
-    error: (message, meta: any = {}) => {
-      if (meta instanceof Error) {
+    error: (message, data: any = {}) => {
+      if (data instanceof Error) {
         winstonLogger.error(message, {
-          service: serviceName,
-          error: meta.message,
-          stack: meta.stack,
+          name,
+          metadata: { error: data.message, stack: data.stack },
         });
       } else {
-        winstonLogger.error(message, { service: serviceName, ...meta });
+        const { requestId, ...metadata } = data;
+        winstonLogger.error(message, {
+          name,
+          ...(requestId && { requestId }),
+          ...(Object.keys(metadata).length > 0 && { metadata }),
+        });
       }
     },
   };

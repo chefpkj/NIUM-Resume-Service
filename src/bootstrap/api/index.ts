@@ -1,10 +1,11 @@
 import "../../conf/env";
+import "../../types/express";
 import express from "express";
 import cors from "cors";
-import { randomUUID } from "crypto";
 import config from "../../conf/app.conf";
 import createLogger from "../../lib/util/logger";
 import errorHandler from "../../lib/api/error-handler";
+import { requestLoggingMiddleware } from "../../lib/api/request-logger.middleware";
 import {
   initResumeRepository,
   getWiredResumeRouter,
@@ -16,13 +17,7 @@ async function start() {
   await initResumeRepository(config.mongoUri);
   const app = express();
 
-  app.use((req, res, next) => {
-    const requestId = randomUUID();
-    (req as any).requestId = requestId;
-    res.setHeader("x-request-id", requestId);
-    next();
-  });
-
+  app.use(requestLoggingMiddleware);
   app.use(cors());
   app.use(express.json());
 
@@ -42,3 +37,7 @@ start().catch((err) => {
   logger.error("Failed to start server", err);
   process.exit(1);
 });
+
+//TODO
+// 1. logger files management in prod
+// 2.

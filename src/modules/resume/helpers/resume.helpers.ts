@@ -3,6 +3,20 @@ export interface ParsedName {
   last: string;
 }
 
+export interface UploadResumePayload {
+  name: string;
+  current_job_title: string;
+  current_job_description: string;
+  current_job_company: string;
+}
+
+export interface ValidatedUploadPayload {
+  parsedName: ParsedName;
+  current_job_title: string;
+  current_job_description: string;
+  current_job_company: string;
+}
+
 export function parseFullName(fullName: string): ParsedName | null {
   if (!fullName || typeof fullName !== "string") return null;
   const parts = fullName.trim().split(/\s+/);
@@ -11,27 +25,23 @@ export function parseFullName(fullName: string): ParsedName | null {
   return { first, last };
 }
 
-export function validateUploadPayload(payload: any) {
+export function validateUploadPayload(
+  payload: unknown
+): ValidatedUploadPayload {
   if (!payload || typeof payload !== "object") {
     const err = new Error("Bad request: request body is required") as any;
     err.status = 400;
     throw err;
   }
 
-  const {
-    name,
-    current_job_title,
-    current_job_description,
-    current_job_company,
-  } = payload;
-
-  const parsedName = parseFullName(name);
+  const data = payload as UploadResumePayload;
+  const parsedName = parseFullName(data.name);
 
   if (
     !parsedName ||
-    !current_job_title ||
-    !current_job_description ||
-    !current_job_company
+    !data.current_job_title ||
+    !data.current_job_description ||
+    !data.current_job_company
   ) {
     const err = new Error("Bad request: invalid or missing fields") as any;
     err.status = 400;
@@ -40,18 +50,20 @@ export function validateUploadPayload(payload: any) {
 
   return {
     parsedName,
-    current_job_title,
-    current_job_description,
-    current_job_company,
+    current_job_title: data.current_job_title,
+    current_job_description: data.current_job_description,
+    current_job_company: data.current_job_company,
   };
 }
 
 export function decodeSearchName(rawNameParam: string): ParsedName {
   let decoded = rawNameParam.replace(/\+/g, " ");
+
+  //TODO: this is optional may be, check this again after making frontend
   try {
     decoded = decodeURIComponent(decoded);
   } catch (e) {
-    // if decodeURIComponent fails, we use the string with + replaced
+    // if decodeURIComponent fails, we have already the string with + replaced
   }
 
   const trimmed = decoded.trim();

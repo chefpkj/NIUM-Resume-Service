@@ -1,3 +1,4 @@
+import "../../types/express";
 import express, { Router } from "express";
 import { ResumeController } from "./resume.controller";
 
