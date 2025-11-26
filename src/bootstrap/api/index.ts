@@ -1,11 +1,11 @@
 import "../../conf/env";
 import express from "express";
 import cors from "cors";
-import path from "path";
 import config from "../../conf/app.conf";
 import createLogger from "../../lib/util/logger";
 import errorHandler from "../../lib/api/error-handler";
 import { requestLoggingMiddleware } from "../../lib/api/request-logger.middleware";
+import { serveFrontend } from "../../lib/api/serve-frontend";
 import {
   initResumeRepository,
   getWiredResumeRouter,
@@ -26,13 +26,7 @@ async function start() {
   });
 
   app.use("/api", getWiredResumeRouter());
-
-  app.use(
-    express.static(
-      path.join(__dirname, "../../../NIUM-Resume-Service-React/dist")
-    )
-  );
-
+  app.use(serveFrontend());
   app.use(errorHandler);
 
   app.listen(config.port, () => {
