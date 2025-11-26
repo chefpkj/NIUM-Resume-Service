@@ -5,7 +5,7 @@ import express from "express";
 export function serveFrontend(): RequestHandler[] {
   const frontendPath = path.join(
     __dirname,
-    "../../../NIUM-Resume-Service-React/dist"
+    "../../../../NIUM-Resume-Service-React/dist"
   );
 
   return [
