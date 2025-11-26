@@ -8,10 +8,5 @@ export function serveFrontend(): RequestHandler[] {
     "../../../../NIUM-Resume-Service-React/dist"
   );
 
-  return [
-    express.static(frontendPath),
-    (_req: Request, res: Response, _next: NextFunction) => {
-      res.sendFile(path.join(frontendPath, "index.html"));
-    },
-  ];
+  return [express.static(frontendPath)];
 }
