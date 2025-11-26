@@ -23,7 +23,7 @@ async function start() {
   const app = express();
 
   app.use(requestLoggingMiddleware);
-  app.use(observabilityMiddleware);
+  app.use(observabilityMiddleware());
   app.use(cors());
   app.use(express.json());
 
