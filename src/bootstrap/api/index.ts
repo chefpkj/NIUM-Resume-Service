@@ -7,6 +7,10 @@ import errorHandler from "../../lib/api/error-handler";
 import { requestLoggingMiddleware } from "../../lib/api/request-logger.middleware";
 import { serveFrontend } from "../../lib/api/serve-frontend";
 import {
+  initializeObservability,
+  observabilityMiddleware,
+} from "../../lib/observability";
+import {
   initResumeRepository,
   getWiredResumeRouter,
 } from "../../modules/resume";
@@ -14,10 +18,12 @@ import {
 const logger = createLogger("api.bootstrap");
 
 async function start() {
+  initializeObservability();
   await initResumeRepository(config.mongoUri);
   const app = express();
 
   app.use(requestLoggingMiddleware);
+  app.use(observabilityMiddleware);
   app.use(cors());
   app.use(express.json());
 

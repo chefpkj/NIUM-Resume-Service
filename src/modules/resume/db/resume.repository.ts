@@ -5,6 +5,7 @@ import { createResumeEntity } from "../domain/resume.entity";
 import { createResumeMapper, ResumeMapper } from "../resume.mapper";
 import resumeSchema from "./resume.schema";
 import createLogger from "../../../lib/util/logger";
+import { registerMongoClient } from "../../../lib/observability";
 
 const logger = createLogger("resume.repository");
 
@@ -29,6 +30,7 @@ export async function initResumeRepository(mongoUri: string): Promise<void> {
 
   if (mongoose.connection.readyState === 0) {
     await mongoose.connect(mongoUri);
+    registerMongoClient(() => mongoose.connection.getClient());
     logger.info("db connected");
   }
 
