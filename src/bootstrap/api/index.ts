@@ -17,8 +17,9 @@ import {
 
 const logger = createLogger("api.bootstrap");
 
+initializeObservability();
+
 async function start() {
-  initializeObservability();
   await initResumeRepository(config.mongoUri);
   const app = express();
 
